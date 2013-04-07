@@ -13,6 +13,9 @@
 // Needed to obtain the Navigation Controller
 #import "AppDelegate.h"
 
+#import "Snake.h"
+#import "GameOverLayer.h"
+
 #pragma mark - HelloWorldLayer
 
 // HelloWorldLayer implementation
@@ -39,67 +42,17 @@
 {
 	// always call "super" init
 	// Apple recommends to re-assign "self" with the "super's" return value
-	if( (self=[super init]) ) {
-		
-		// create and initialize a Label
-		CCLabelTTF *label = [CCLabelTTF labelWithString:@"Hello World" fontName:@"Marker Felt" fontSize:64];
-
-		// ask director for the window size
-		CGSize size = [[CCDirector sharedDirector] winSize];
-	
-		// position the label on the center of the screen
-		label.position =  ccp( size.width /2 , size.height/2 );
-		
-		// add the label as a child to this Layer
-		[self addChild: label];
-		
-		
-		
-		//
-		// Leaderboards and Achievements
-		//
-		
-		// Default font size will be 28 points.
-		[CCMenuItemFont setFontSize:28];
-		
-		// Achievement Menu Item using blocks
-		CCMenuItem *itemAchievement = [CCMenuItemFont itemWithString:@"Achievements" block:^(id sender) {
-			
-			
-			GKAchievementViewController *achivementViewController = [[GKAchievementViewController alloc] init];
-			achivementViewController.achievementDelegate = self;
-			
-			AppController *app = (AppController*) [[UIApplication sharedApplication] delegate];
-			
-			[[app navController] presentModalViewController:achivementViewController animated:YES];
-			
-			[achivementViewController release];
-		}
-									   ];
-
-		// Leaderboard Menu Item using blocks
-		CCMenuItem *itemLeaderboard = [CCMenuItemFont itemWithString:@"Leaderboard" block:^(id sender) {
-			
-			
-			GKLeaderboardViewController *leaderboardViewController = [[GKLeaderboardViewController alloc] init];
-			leaderboardViewController.leaderboardDelegate = self;
-			
-			AppController *app = (AppController*) [[UIApplication sharedApplication] delegate];
-			
-			[[app navController] presentModalViewController:leaderboardViewController animated:YES];
-			
-			[leaderboardViewController release];
-		}
-									   ];
-		
-		CCMenu *menu = [CCMenu menuWithItems:itemAchievement, itemLeaderboard, nil];
-		
-		[menu alignItemsHorizontallyWithPadding:20];
-		[menu setPosition:ccp( size.width/2, size.height/2 - 50)];
-		
-		// Add the menu to the layer
-		[self addChild:menu];
-
+	if( (self=[super init]) )
+    {
+		self.isTouchEnabled = YES;
+        
+		_snake = [[Snake alloc] initWithTheGame:self];
+        [self schedule:@selector(update:) interval:0.1];
+        [self schedule:@selector(eatFood) interval:1];
+        
+        _food = [CCSprite spriteWithFile:@"food.png"];
+        [self addChild:_food];
+        [self setFood];
 	}
 	return self;
 }
@@ -110,22 +63,117 @@
 	// in case you have something to dealloc, do it in this method
 	// in this particular example nothing needs to be released.
 	// cocos2d will automatically release all the children (Label)
-	
+	[_snake release];
+    _snake = nil;
+    
 	// don't forget to call "super dealloc"
 	[super dealloc];
 }
 
-#pragma mark GameKit delegate
-
--(void) achievementViewControllerDidFinish:(GKAchievementViewController *)viewController
+- (void) update:(ccTime)dt
 {
-	AppController *app = (AppController*) [[UIApplication sharedApplication] delegate];
-	[[app navController] dismissModalViewControllerAnimated:YES];
+    [_snake move];
+    [self checkForCollision];
 }
 
--(void) leaderboardViewControllerDidFinish:(GKLeaderboardViewController *)viewController
+- (void)ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
-	AppController *app = (AppController*) [[UIApplication sharedApplication] delegate];
-	[[app navController] dismissModalViewControllerAnimated:YES];
+    UITouch *touch = [touches anyObject];
+    CGPoint location = [self convertTouchToNodeSpace:touch];
+    
+    // judage the direction
+    CGPoint offset = ccpSub(location, [_snake getHeadPosition]);
+    if (offset.x == 0 && offset.y == 0) return;
+    CGPoint dir;
+    if ( fabs(offset.y) < fabs(offset.x) )
+    {
+        dir.y = 0;
+        dir.x = offset.x > 0 ? 1 : -1;
+    }
+    else
+    {
+        dir.x = 0;
+        dir.y = offset.y > 0 ? 1 : -1;
+    }
+    [_snake moveWithDir:dir];
+    
 }
+
+- (void)setFood
+{
+    CGSize winSize = [CCDirector sharedDirector].winSize;
+    int foodSize = _food.contentSize.width;
+    int foodX = arc4random() % (int)(winSize.width-foodSize);
+    int foodY = arc4random() % (int)(winSize.height-foodSize);
+    _food.position = ccp( foodX, foodY );
+}
+
+- (void)eatFood
+{
+    float headImageSize = _snake.getHeadImageSize;
+    float foodImageSize = _food.contentSize.width;
+    float headConllisionRadius = headImageSize * 0.4f;
+    float foodConllisionRadius = foodImageSize * 0.4f;
+    
+    float maxCollisionDistance = headConllisionRadius + foodConllisionRadius;
+    
+    float actualDistance = ccpDistance(_snake.getHeadPosition, _food.position);
+    if ( actualDistance < maxCollisionDistance )
+    {
+        [_snake eatedFood];
+        [self setFood];
+    }
+}
+
+- (BOOL)outOfScreen
+{
+    CGPoint pos = [_snake getHeadPosition];
+    int minX = [_snake getHeadImageSize]/2;
+    int maxX = 480 - [_snake getHeadImageSize]/2;
+    int minY = minX;
+    int maxY = 320 - [_snake getHeadImageSize]/2;
+    
+    if ( (pos.x < minX || pos.x > maxX) || (pos.y < minY || pos.y > maxY) )
+    {
+        return YES;
+    }
+    return NO;
+}
+
+- (BOOL)suicide
+{
+    for (CCSprite *item in [_snake getBodyPosition])
+    {
+        if ( ccpDistance([_snake getHeadPosition], item.position) < [_snake getHeadImageSize]*0.4f )
+        {
+            return YES;
+        }
+    }
+    return NO;
+}
+
+- (void)checkForCollision
+{
+    [self eatFood];
+    if ( [self outOfScreen] || [self suicide] )
+    {
+        [self gameOver];
+    }
+}
+
+- (void)gameOver
+{
+    [[CCDirector sharedDirector] replaceScene:[GameOverLayer sceneWithWon:NO]];
+    [self reset];
+}
+
+- (void)reset
+{
+    if ( _snake != nil )
+    {
+        [_snake removeFromParentAndCleanup:YES];
+        _snake = [[Snake alloc] initWithTheGame:self];
+    }
+}
+
 @end
