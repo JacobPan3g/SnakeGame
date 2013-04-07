@@ -143,6 +143,7 @@
 		1673E2B9171157C000CBC7F3 /* head.png in Resources */ = {isa = PBXBuildFile; fileRef = 1673E2B1171157C000CBC7F3 /* head.png */; };
 		1673E2BA171157C000CBC7F3 /* head@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1673E2B2171157C000CBC7F3 /* head@2x.png */; };
 		1673E2BD17115A1600CBC7F3 /* GameOverLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1673E2BC17115A1600CBC7F3 /* GameOverLayer.m */; };
+		16B9305217119C53000418D9 /* AiSanke.m in Sources */ = {isa = PBXBuildFile; fileRef = 16B9305117119C53000418D9 /* AiSanke.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -420,6 +421,8 @@
 		1673E2B2171157C000CBC7F3 /* head@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "head@2x.png"; sourceTree = "<group>"; };
 		1673E2BB17115A1600CBC7F3 /* GameOverLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameOverLayer.h; sourceTree = "<group>"; };
 		1673E2BC17115A1600CBC7F3 /* GameOverLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameOverLayer.m; sourceTree = "<group>"; };
+		16B9305017119C53000418D9 /* AiSanke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AiSanke.h; sourceTree = "<group>"; };
+		16B9305117119C53000418D9 /* AiSanke.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AiSanke.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -488,6 +491,8 @@
 				167374B5170AF196004BD181 /* Snake.m */,
 				1673E2BB17115A1600CBC7F3 /* GameOverLayer.h */,
 				1673E2BC17115A1600CBC7F3 /* GameOverLayer.m */,
+				16B9305017119C53000418D9 /* AiSanke.h */,
+				16B9305117119C53000418D9 /* AiSanke.m */,
 				1673732F170AF11F004BD181 /* Resources */,
 				16737349170AF11F004BD181 /* libs */,
 				167374A2170AF124004BD181 /* Supporting Files */,
@@ -1061,6 +1066,7 @@
 				167374AE170AF124004BD181 /* IntroLayer.m in Sources */,
 				167374B6170AF196004BD181 /* Snake.m in Sources */,
 				1673E2BD17115A1600CBC7F3 /* GameOverLayer.m in Sources */,
+				16B9305217119C53000418D9 /* AiSanke.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

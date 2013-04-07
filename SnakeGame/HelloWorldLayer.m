@@ -15,6 +15,7 @@
 
 #import "Snake.h"
 #import "GameOverLayer.h"
+#import "AiSanke.h"
 
 #pragma mark - HelloWorldLayer
 
@@ -46,9 +47,10 @@
     {
 		self.isTouchEnabled = YES;
         
-		_snake = [[Snake alloc] initWithTheGame:self];
-        [self schedule:@selector(update:) interval:0.1];
-        [self schedule:@selector(eatFood) interval:1];
+		_snake = [[Snake alloc] initWithTheGame:self withImageName:@"body.png" withHeadPosition:ccp(128,288)];
+        _aiSnake = [[AiSanke alloc] initWithTheGame:self withImageName:@"ai_body.png" withHeadPosition:ccp(128,32)];
+        [self schedule:@selector(checkForCollision) interval:0.1];
+        [self schedule:@selector(update:) interval:1];
         
         _food = [CCSprite spriteWithFile:@"food.png"];
         [self addChild:_food];
@@ -73,7 +75,8 @@
 - (void) update:(ccTime)dt
 {
     [_snake move];
-    [self checkForCollision];
+    [_aiSnake move];
+    [self eatFood];
 }
 
 - (void)ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
@@ -106,6 +109,8 @@
     int foodX = arc4random() % (int)(winSize.width-foodSize);
     int foodY = arc4random() % (int)(winSize.height-foodSize);
     _food.position = ccp( foodX, foodY );
+    
+    [_aiSnake getRoad:_food.position];
 }
 
 - (void)eatFood
@@ -121,6 +126,13 @@
     if ( actualDistance < maxCollisionDistance )
     {
         [_snake eatedFood];
+        [self setFood];
+    }
+    
+    actualDistance = ccpDistance(_aiSnake.getHeadPosition, _food.position);
+    if ( actualDistance < maxCollisionDistance )
+    {
+        [_aiSnake eatedFood];
         [self setFood];
     }
 }
@@ -172,7 +184,7 @@
     if ( _snake != nil )
     {
         [_snake removeFromParentAndCleanup:YES];
-        _snake = [[Snake alloc] initWithTheGame:self];
+        //_snake = [[Snake alloc] initWithTheGame:self withImageName:@"body.png"];
     }
 }
 

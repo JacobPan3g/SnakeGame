@@ -16,9 +16,11 @@
     CCSprite *_head;
     NSMutableArray *_body;
     CGPoint _dir;
+    NSString *_bodyImageName;
+    CGPoint _initHeadPos;
 }
 
-- (id) initWithTheGame:(HelloWorldLayer *)game;
+- (id) initWithTheGame:(HelloWorldLayer *)game withImageName:(NSString *)filename  withHeadPosition:(CGPoint)pos;
 - (CGPoint) getHeadPosition;
 - (CGPoint) getDir;
 - (int) getHeadImageSize;
@@ -27,6 +29,5 @@
 - (void) move;
 - (void) moveWithDir:(CGPoint)dir;
 - (void) eatedFood;
-- (void) willDie;
 
 @end

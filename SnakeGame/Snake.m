@@ -11,11 +11,14 @@
 
 @implementation Snake
 
-- (id)initWithTheGame:(HelloWorldLayer *)game
+- (id)initWithTheGame:(HelloWorldLayer *)game withImageName:(NSString *)filename withHeadPosition:(CGPoint)pos
 {
     if ( self = [super init] )
     {
         _game = game;
+        _bodyImageName = filename;
+        _initHeadPos = pos;
+        
         [self addSnake];
     }
     return self;
@@ -32,19 +35,18 @@
 {
     _dir = ccp(1,0);
     _head = [CCSprite spriteWithFile:@"head.png"];
-    CGSize winSize = [CCDirector sharedDirector].winSize;
     int imageWidth = _head.contentSize.width;
     
     [self addChild:_head];
-    _head.position = ccp(imageWidth*4, winSize.height-_head.contentSize.height/2);
+    _head.position = _initHeadPos;
     
     // set the body on screen
     _body = [[NSMutableArray alloc] initWithCapacity:3];
     for ( int i = 3; i > 0; i-- )
     {
-        CCSprite *tmpBody = [CCSprite spriteWithFile:@"body.png"];
+        CCSprite *tmpBody = [CCSprite spriteWithFile:_bodyImageName];
         [self addChild:tmpBody];
-        tmpBody.position = ccp(imageWidth*i, winSize.height-_head.contentSize.height/2);
+        tmpBody.position = ccp(imageWidth*i, _head.position.y);
         
         [_body addObject:tmpBody];
         
@@ -133,7 +135,7 @@
 
 - (void)eatedFood
 {
-    CCSprite *tmpBody = [CCSprite spriteWithFile:@"body.png"];
+    CCSprite *tmpBody = [CCSprite spriteWithFile:_bodyImageName];
     [self addChild:tmpBody];
     tmpBody.position = ((CCSprite*)[_body objectAtIndex:([_body count]-1)]).position;
     [_body addObject:tmpBody];

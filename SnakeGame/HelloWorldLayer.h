@@ -13,11 +13,13 @@
 #import "cocos2d.h"
 
 @class Snake;
+@class AiSanke;
 
 // HelloWorldLayer
 @interface HelloWorldLayer : CCLayer
 {
     Snake *_snake;
+    AiSanke *_aiSnake;
     CCSprite *_food;
 }
 
