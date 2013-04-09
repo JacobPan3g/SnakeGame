@@ -11,10 +11,14 @@
 
 @implementation Snake
 
+@synthesize sorce;
+
 - (id)initWithTheGame:(HelloWorldLayer *)game withImageName:(NSString *)filename withHeadPosition:(CGPoint)pos
 {
     if ( self = [super init] )
     {
+        self.sorce = 0;
+        
         _game = game;
         _bodyImageName = filename;
         _initHeadPos = pos;
@@ -124,11 +128,6 @@
     return _head.contentSize.width;
 }
 
-- (NSArray *)getBodyPosition
-{
-    return _body;
-}
-
 - (NSArray *)getAllPositions
 {
     NSMutableArray *res = [NSMutableArray array];
@@ -185,6 +184,8 @@
 
 - (void)eatedFood
 {
+    self.sorce++;
+    
     CCSprite *tmpBody = [CCSprite spriteWithFile:_bodyImageName];
     [self addChild:tmpBody];
     tmpBody.position = ((CCSprite*)[_body objectAtIndex:([_body count]-1)]).position;
@@ -209,10 +210,10 @@
 - (BOOL)suicide
 {
     // ignore the collision between head and 1st, 2nd bodys
-    for ( int i = 2; i < [_body count]; i++ )
+    for ( int i = 0; i < [_body count]; i++ )
     {
         CCSprite *item = [_body objectAtIndex:i];
-        if ( ccpDistance(_head.position, item.position) < _head.contentSize.width * 0.8 )
+        if ( ccpDistance(_head.position, item.position) < _head.contentSize.width * 0.5 )
         {
             return YES;
         }

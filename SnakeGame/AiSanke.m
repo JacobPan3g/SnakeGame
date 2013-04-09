@@ -55,15 +55,11 @@
         }
     }
     
-    NSLog(@"(%f, %f)", _head.position.x, _head.position.y);
-    NSLog(@"(%f, %f)", fondPosition.x, fondPosition.y);
-    NSLog(@"%@", _road);
-    
     idxForRoad = 0;
     
     return _road;
 }
-
+/*
 - (void)move
 {
     if ( idxForRoad < [_road count] )
@@ -73,6 +69,65 @@
         idxForRoad++;
         [super moveWithDir:firstDir];
     }
+}*/
+
+- (void)moveNextWithAntherSnake:(NSArray*)snake withFood:(CGPoint)food
+{
+    NSArray *dirs = [NSArray arrayWithObjects:
+                     [NSValue valueWithCGPoint:ccp(1, 0)],
+                     [NSValue valueWithCGPoint:ccp(0, 1)],
+                     [NSValue valueWithCGPoint:ccp(-1, 0)],
+                     [NSValue valueWithCGPoint:ccp(0, -1)], nil];
+    
+    CGPoint realDir;
+    CGPoint oldPos = _head.position;
+    int imageWidth = _head.contentSize.width;
+    
+    float shortest = 10000000.f;
+    CGPoint nextPos;
+    //BOOL willMove = NO;
+    int idx = -1;
+    
+    for ( int i = 0; i < [dirs count]; i++ )
+    {
+        [[dirs objectAtIndex:i] getValue:&realDir];
+        
+        [self logPoint:_head.position];
+        _head.position = ccp(_head.position.x+realDir.x*imageWidth, _head.position.y+realDir.y*imageWidth);
+        [self logPoint:_head.position];
+        
+        // if not dead, compute the shortest
+        if ( ![self willDieWithAnotherSnake:snake] )
+        {
+            if ( ccpDistance(_head.position, food) < shortest )
+            {
+                //willMove = YES;
+                idx = i;
+                shortest = ccpDistance(_head.position, food);
+                nextPos = _head.position;
+            }
+        }
+        _head.position = oldPos;
+    }
+    
+    if ( idx != -1 )
+    {
+        //_head.position = nextPos;
+        [[dirs objectAtIndex:idx] getValue:&realDir];
+    }
+    else
+    {
+        [[dirs objectAtIndex:0] getValue:&realDir];
+    }
+    //[self moveWithDir:realDir];
+    
+    _dir = realDir;
+    [self move];
+}
+
+- (void)logPoint:(CGPoint)p
+{
+    NSLog(@"x: %f, y: %f", p.x, p.y);
 }
 
 @end

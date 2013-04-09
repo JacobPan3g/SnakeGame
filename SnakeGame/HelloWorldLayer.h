@@ -19,8 +19,13 @@
 @interface HelloWorldLayer : CCLayer
 {
     Snake *_snake;
-    //AiSanke *_aiSnake;
+    AiSanke *_aiSnake;
     CCSprite *_food;
+    
+    int _snakeSorce;
+    int _aiSnakeSorce;
+    CCLabelTTF *_snakeSorceLabel;
+    CCLabelTTF *_aiSnakeSorceLabel;
 }
 
 // returns a CCScene that contains the HelloWorldLayer as the only child

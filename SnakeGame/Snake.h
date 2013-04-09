@@ -20,16 +20,17 @@
     CGPoint _initHeadPos;
 }
 
+@property (nonatomic) int sorce;
+
 - (id) initWithTheGame:(HelloWorldLayer *)game withImageName:(NSString *)filename  withHeadPosition:(CGPoint)pos;
+
 - (CGPoint) getHeadPosition;
 - (CGPoint) getDir;
 - (int) getHeadImageSize;
-//- (NSArray *)getBodyPosition;
 - (NSArray*) getAllPositions;
-- (void) move;
-//- (void) moveWithDir:(CGPoint)dir;
-//- (void) eatedFood;
 
+- (void) move;
+- (void) moveWithDir:(CGPoint)dir;
 - (void) moveWithTouchPoint:(CGPoint)touchPoint;
 
 - (BOOL)eatFoodWithFoodPosition:(CCSprite *)food;

@@ -48,13 +48,15 @@
 		self.isTouchEnabled = YES;
         
 		_snake = [[Snake alloc] initWithTheGame:self withImageName:@"body.png" withHeadPosition:ccp(128,288)];
-        //_aiSnake = [[AiSanke alloc] initWithTheGame:self withImageName:@"ai_body.png" withHeadPosition:ccp(128,32)];
+        _aiSnake = [[AiSanke alloc] initWithTheGame:self withImageName:@"ai_body.png" withHeadPosition:ccp(128,32)];
         [self schedule:@selector(checkForCollision) interval:0.1];
-        [self schedule:@selector(update:) interval:1];
+        [self schedule:@selector(update:) interval:0.8];
         
         _food = [CCSprite spriteWithFile:@"food.png"];
         [self addChild:_food];
         [self setFood];
+        
+        [self addSorceLabels];
 	}
 	return self;
 }
@@ -75,7 +77,8 @@
 - (void) update:(ccTime)dt
 {
     [_snake move];
-    //[_aiSnake move];
+    [_aiSnake moveNextWithAntherSnake:[_snake getAllPositions] withFood:_food.position];
+    //[_aiSnake moveWithTouchPoint:_food.position];
     //[self eatFood];
 }
 
@@ -103,23 +106,54 @@
     [_snake moveWithTouchPoint:location];
 }
 
+- (BOOL)isEmpty:(CGPoint)pos
+{
+    CGPoint cur;
+    for (NSValue *item in [_snake getAllPositions])
+    {
+        [item getValue:&cur];
+        if ( ccpDistance(cur, pos) == 0 )
+        {
+            return NO;
+        }
+    }
+    
+    for ( NSValue *item in [_aiSnake getAllPositions] )
+    {
+        [item getValue:&cur];
+        if ( ccpDistance(cur, pos) == 0 )
+        {
+            return NO;
+        }
+    }
+    return YES;
+}
+
 - (void)setFood
 {
-    CGSize winSize = [CCDirector sharedDirector].winSize;
-    int foodSize = _food.contentSize.width;
-    int foodX = arc4random() % (int)(winSize.width-foodSize);
-    int foodY = arc4random() % (int)(winSize.height-foodSize);
-    _food.position = ccp( foodX, foodY );
+    CGPoint newPos;
+    do {
+        CGSize winSize = [CCDirector sharedDirector].winSize;
+        int foodSize = _food.contentSize.width;
+        int x = arc4random() % (int)(winSize.width-foodSize);
+        int y = arc4random() % (int)(winSize.height-foodSize);
+        int foodX = x/foodSize*foodSize+foodSize/2;
+        int foodY = y/foodSize*foodSize+foodSize/2;
+        newPos = ccp( foodX, foodY );
+    } while ( ![self isEmpty:newPos] );
+    
+    _food.position = newPos;
+    
     
     //[_aiSnake getRoad:_food.position];
 }
-
+/*
 - (void)eatFood
 {
     [_snake eatFoodWithFoodPosition:_food];
     [self setFood];
     
-}
+}*/
 /*
 - (BOOL)outOfScreen
 {
@@ -149,27 +183,37 @@
 }*/
 
 - (void)checkForCollision
-{/*
-    [self eatFood];
-    if ( [self outOfScreen] || [self suicide] )
-    {
-        [self gameOver];
-    }*/
-    
-    if ( [_snake eatFoodWithFoodPosition:_food] )
+{
+    if ( [_snake eatFoodWithFoodPosition:_food] || [_aiSnake eatFoodWithFoodPosition:_food] )
     {
         [self setFood];
+        [self changeScrceLabels];
     }
     
-    if ( [_snake willDieWithAnotherSnake:nil] )
+    if ( [_snake willDieWithAnotherSnake:[_aiSnake getAllPositions]] )
     {
-        [self gameOver];
+        [self gameOver:NO];
+    }
+    
+    if ( [_aiSnake willDieWithAnotherSnake:[_snake getAllPositions]] )
+    {
+        [self gameOver:YES];
+    }
+    
+    if ( _snake.sorce >= 10 )
+    {
+        [self gameOver:YES];
+    }
+    
+    if ( _aiSnake.sorce >= 10 )
+    {
+        [self gameOver:NO];
     }
 }
 
-- (void)gameOver
+- (void)gameOver:(BOOL)won
 {
-    [[CCDirector sharedDirector] replaceScene:[GameOverLayer sceneWithWon:NO]];
+    [[CCDirector sharedDirector] replaceScene:[GameOverLayer sceneWithWon:won]];
     [self reset];
 }
 
@@ -180,6 +224,25 @@
         [_snake removeFromParentAndCleanup:YES];
         //_snake = [[Snake alloc] initWithTheGame:self withImageName:@"body.png"];
     }
+}
+
+
+#pragma mark - some methods for sorce labels
+
+- (void)addSorceLabels
+{
+    _snakeSorceLabel = [CCLabelTTF labelWithString:@"Earth Snake: 0" fontName:@"Arial" fontSize:16];
+    _aiSnakeSorceLabel = [CCLabelTTF labelWithString:@"Mars Snake: 0" fontName:@"Arial" fontSize:16];
+    [self addChild:_snakeSorceLabel];
+    [self addChild:_aiSnakeSorceLabel];
+    _snakeSorceLabel.position = ccp(20+_snakeSorceLabel.contentSize.width/2,300);
+    _aiSnakeSorceLabel.position = ccp(460-_aiSnakeSorceLabel.contentSize.width/2,300);
+}
+
+- (void)changeScrceLabels
+{
+    [_snakeSorceLabel setString:[NSString stringWithFormat:@"Earth Snake: %d", _snake.sorce]];
+    [_aiSnakeSorceLabel setString:[NSString stringWithFormat:@"Mars Snake: %d", _aiSnake.sorce]];
 }
 
 @end

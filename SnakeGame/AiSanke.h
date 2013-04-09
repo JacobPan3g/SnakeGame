@@ -15,7 +15,9 @@
     int idxForRoad;
 }
 
-- (NSArray *)getRoad:(CGPoint)fondPosition;
-- (void)move;
+- (void)moveNextWithAntherSnake:(NSArray*)snake withFood:(CGPoint)food;
+
+//- (NSArray *)getRoad:(CGPoint)fondPosition;
+//- (void)move;
 
 @end
