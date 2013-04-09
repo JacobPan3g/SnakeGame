@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1671B2EF17142CB500788278 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1671B2EE17142CB500788278 /* Default-568h@2x.png */; };
 		1673731D170AF11F004BD181 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1673731C170AF11F004BD181 /* QuartzCore.framework */; };
 		1673731F170AF11F004BD181 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1673731E170AF11F004BD181 /* OpenGLES.framework */; };
 		16737321170AF11F004BD181 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16737320170AF11F004BD181 /* OpenAL.framework */; };
@@ -147,6 +148,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1671B2EE17142CB500788278 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		16737319170AF11F004BD181 /* SnakeGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SnakeGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1673731C170AF11F004BD181 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		1673731E170AF11F004BD181 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -448,6 +450,7 @@
 		16737310170AF11F004BD181 = {
 			isa = PBXGroup;
 			children = (
+				1671B2EE17142CB500788278 /* Default-568h@2x.png */,
 				1673732E170AF11F004BD181 /* SnakeGame */,
 				1673731B170AF11F004BD181 /* Frameworks */,
 				1673731A170AF11F004BD181 /* Products */,
@@ -950,6 +953,7 @@
 				1673E2B8171157C000CBC7F3 /* food@2x.png in Resources */,
 				1673E2B9171157C000CBC7F3 /* head.png in Resources */,
 				1673E2BA171157C000CBC7F3 /* head@2x.png in Resources */,
+				1671B2EF17142CB500788278 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

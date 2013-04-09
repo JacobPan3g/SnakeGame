@@ -48,7 +48,7 @@
 		self.isTouchEnabled = YES;
         
 		_snake = [[Snake alloc] initWithTheGame:self withImageName:@"body.png" withHeadPosition:ccp(128,288)];
-        _aiSnake = [[AiSanke alloc] initWithTheGame:self withImageName:@"ai_body.png" withHeadPosition:ccp(128,32)];
+        //_aiSnake = [[AiSanke alloc] initWithTheGame:self withImageName:@"ai_body.png" withHeadPosition:ccp(128,32)];
         [self schedule:@selector(checkForCollision) interval:0.1];
         [self schedule:@selector(update:) interval:1];
         
@@ -75,15 +75,15 @@
 - (void) update:(ccTime)dt
 {
     [_snake move];
-    [_aiSnake move];
-    [self eatFood];
+    //[_aiSnake move];
+    //[self eatFood];
 }
 
 - (void)ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
     UITouch *touch = [touches anyObject];
     CGPoint location = [self convertTouchToNodeSpace:touch];
-    
+    /*
     // judage the direction
     CGPoint offset = ccpSub(location, [_snake getHeadPosition]);
     if (offset.x == 0 && offset.y == 0) return;
@@ -98,8 +98,9 @@
         dir.x = 0;
         dir.y = offset.y > 0 ? 1 : -1;
     }
-    [_snake moveWithDir:dir];
+    [_snake moveWithDir:dir];*/
     
+    [_snake moveWithTouchPoint:location];
 }
 
 - (void)setFood
@@ -110,33 +111,16 @@
     int foodY = arc4random() % (int)(winSize.height-foodSize);
     _food.position = ccp( foodX, foodY );
     
-    [_aiSnake getRoad:_food.position];
+    //[_aiSnake getRoad:_food.position];
 }
 
 - (void)eatFood
 {
-    float headImageSize = _snake.getHeadImageSize;
-    float foodImageSize = _food.contentSize.width;
-    float headConllisionRadius = headImageSize * 0.4f;
-    float foodConllisionRadius = foodImageSize * 0.4f;
+    [_snake eatFoodWithFoodPosition:_food];
+    [self setFood];
     
-    float maxCollisionDistance = headConllisionRadius + foodConllisionRadius;
-    
-    float actualDistance = ccpDistance(_snake.getHeadPosition, _food.position);
-    if ( actualDistance < maxCollisionDistance )
-    {
-        [_snake eatedFood];
-        [self setFood];
-    }
-    
-    actualDistance = ccpDistance(_aiSnake.getHeadPosition, _food.position);
-    if ( actualDistance < maxCollisionDistance )
-    {
-        [_aiSnake eatedFood];
-        [self setFood];
-    }
 }
-
+/*
 - (BOOL)outOfScreen
 {
     CGPoint pos = [_snake getHeadPosition];
@@ -150,24 +134,34 @@
         return YES;
     }
     return NO;
-}
-
+}*/
+/*
 - (BOOL)suicide
 {
     for (CCSprite *item in [_snake getBodyPosition])
     {
-        if ( ccpDistance([_snake getHeadPosition], item.position) < [_snake getHeadImageSize]*0.4f )
+        if ( ccpDistance([_snake getHeadPosition], item.position) < [_snake getHeadImageSize]*0.5f )
         {
             return YES;
         }
     }
     return NO;
-}
+}*/
 
 - (void)checkForCollision
-{
+{/*
     [self eatFood];
     if ( [self outOfScreen] || [self suicide] )
+    {
+        [self gameOver];
+    }*/
+    
+    if ( [_snake eatFoodWithFoodPosition:_food] )
+    {
+        [self setFood];
+    }
+    
+    if ( [_snake willDieWithAnotherSnake:nil] )
     {
         [self gameOver];
     }

@@ -19,7 +19,7 @@
 @interface HelloWorldLayer : CCLayer
 {
     Snake *_snake;
-    AiSanke *_aiSnake;
+    //AiSanke *_aiSnake;
     CCSprite *_food;
 }
 

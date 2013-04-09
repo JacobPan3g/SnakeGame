@@ -24,10 +24,15 @@
 - (CGPoint) getHeadPosition;
 - (CGPoint) getDir;
 - (int) getHeadImageSize;
-- (NSArray *)getBodyPosition;
-- (NSArray*) getAllPosition;
+//- (NSArray *)getBodyPosition;
+- (NSArray*) getAllPositions;
 - (void) move;
-- (void) moveWithDir:(CGPoint)dir;
-- (void) eatedFood;
+//- (void) moveWithDir:(CGPoint)dir;
+//- (void) eatedFood;
+
+- (void) moveWithTouchPoint:(CGPoint)touchPoint;
+
+- (BOOL)eatFoodWithFoodPosition:(CCSprite *)food;
+- (BOOL)willDieWithAnotherSnake:(NSArray*)snake;
 
 @end

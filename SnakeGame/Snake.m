@@ -55,6 +55,35 @@
     
 }
 
+- (void)moveWithTouchPoint:(CGPoint)touchPoint
+{
+    CGPoint offset = ccpSub(touchPoint, _head.position);
+    
+    if ( _dir.x == 0 )
+    {
+        if ( offset.x < 0 )
+        {
+            _dir = ccp(-1,0);
+        }
+        else if ( offset.x > 0 )
+        {
+            _dir = ccp(1,0);
+        }
+    }
+    else if ( _dir.y == 0 )
+    {
+        if ( offset.y < 0 )
+        {
+            _dir = ccp(0,-1);
+        }
+        else if ( offset.y > 0 )
+        {
+            _dir = ccp(0,1);
+        }
+    }
+    [self move];
+}
+
 -(void)moveWithDir:(CGPoint)dir
 {
     _dir = ccp(dir.x, dir.y);
@@ -100,12 +129,15 @@
     return _body;
 }
 
-- (NSArray *)getAllPosition
+- (NSArray *)getAllPositions
 {
-    NSMutableArray *res = [NSMutableArray arrayWithObject:_head];
+    NSMutableArray *res = [NSMutableArray array];
+    NSValue *pos = [NSValue valueWithCGPoint:_head.position];
+    [res addObject:pos];
     for (CCSprite *item in _body)
     {
-        [res addObject:item];
+        pos = [NSValue valueWithCGPoint:item.position];
+        [res addObject:pos];
     }
     return res;
 }
@@ -133,12 +165,82 @@
     }
 }
 
+- (BOOL)eatFoodWithFoodPosition:(CCSprite *)food
+{
+    float headImageSize = _head.contentSize.width;
+    float foodImageSize = food.contentSize.width;
+    float headConllisionRadius = headImageSize * 0.4f;
+    float foodConllisionRadius = foodImageSize * 0.4f;
+    
+    float maxCollisionDistance = headConllisionRadius + foodConllisionRadius;
+    
+    float actualDistance = ccpDistance(_head.position, food.position);
+    if ( actualDistance < maxCollisionDistance )
+    {
+        [self eatedFood];
+        return YES;
+    }
+    return NO;
+}
+
 - (void)eatedFood
 {
     CCSprite *tmpBody = [CCSprite spriteWithFile:_bodyImageName];
     [self addChild:tmpBody];
     tmpBody.position = ((CCSprite*)[_body objectAtIndex:([_body count]-1)]).position;
     [_body addObject:tmpBody];
+}
+
+- (BOOL)outOfScreen
+{
+    CGPoint pos = _head.position;
+    int minX = _head.contentSize.width/2;
+    int maxX = 480 - _head.contentSize.width/2;
+    int minY = minX;
+    int maxY = 320 - _head.contentSize.width/2;
+    
+    if ( (pos.x < minX || pos.x > maxX) || (pos.y < minY || pos.y > maxY) )
+    {
+        return YES;
+    }
+    return NO;
+}
+
+- (BOOL)suicide
+{
+    // ignore the collision between head and 1st, 2nd bodys
+    for ( int i = 2; i < [_body count]; i++ )
+    {
+        CCSprite *item = [_body objectAtIndex:i];
+        if ( ccpDistance(_head.position, item.position) < _head.contentSize.width * 0.8 )
+        {
+            return YES;
+        }
+    }
+    return NO;
+}
+
+- (BOOL)beKill:(NSArray *)snake
+{
+    if ( snake != nil )
+    {
+        CGPoint pos;
+        for ( NSValue *item in snake )
+        {
+            [item getValue:&pos];
+            if ( ccpDistance(_head.position, pos) < _head.contentSize.width )
+            {
+                return YES;
+            }
+        }
+    }
+    return NO;
+}
+
+
+- (BOOL)willDieWithAnotherSnake:(NSArray *)snake
+{
+    return ( [self outOfScreen] || [self suicide] || [self beKill:snake] );
 }
 
 @end
