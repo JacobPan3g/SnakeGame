@@ -213,13 +213,13 @@
     return NO;
 }
 
-- (BOOL)suicide
+- (BOOL)suicide:(float)strict
 {
     // ignore the collision between head and 1st, 2nd bodys
     for ( int i = 0; i < [_body count]; i++ )
     {
         CCSprite *item = [_body objectAtIndex:i];
-        if ( ccpDistance(_head.position, item.position) < _head.contentSize.width * 0.4 )
+        if ( ccpDistance(_head.position, item.position) < _head.contentSize.width * strict )
         {
             return YES;
         }
@@ -245,9 +245,9 @@
 }
 
 
-- (BOOL)willDieWithAnotherSnake:(NSArray *)snake
+- (BOOL)willDieWithAnotherSnake:(NSArray *)snake withStrict:(float)strict
 {
-    return ( [self outOfScreen] || [self suicide] || [self beKill:snake] );
+    return ( [self outOfScreen] || [self suicide:strict] || [self beKill:snake] );
 }
 
 @end

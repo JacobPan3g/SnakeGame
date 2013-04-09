@@ -87,7 +87,7 @@
         //[self logPoint:_head.position];
         
         // if not dead, compute the shortest
-        if ( ![self willDieWithAnotherSnake:snake] )
+        if ( ![self willDieWithAnotherSnake:snake withStrict:1] )
         {
             if ( ccpDistance(_head.position, food) < shortest )
             {

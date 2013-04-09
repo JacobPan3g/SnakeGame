@@ -49,7 +49,7 @@
         
 		_snake = [[Snake alloc] initWithTheGame:self withImageName:@"body.png" withHeadPosition:ccp(128,288)];
         _aiSnake = [[AiSanke alloc] initWithTheGame:self withImageName:@"ai_body.png" withHeadPosition:ccp(128,32)];
-        [self schedule:@selector(updateQuick) interval:0.2];
+        [self schedule:@selector(updateQuick) interval:0.1];
         [self schedule:@selector(updateSlow) interval:1];
         
         _food = [CCSprite spriteWithFile:@"food.png"];
@@ -121,12 +121,12 @@
         [self changeScrceLabels];
     }
     
-    if ( [_snake willDieWithAnotherSnake:[_aiSnake getAllPositions]] )
+    if ( [_snake willDieWithAnotherSnake:[_aiSnake getAllPositions] withStrict:0.4] )
     {
         [self gameOver:NO];
     }
     
-    if ( [_aiSnake willDieWithAnotherSnake:[_snake getAllPositions]] )
+    if ( [_aiSnake willDieWithAnotherSnake:[_snake getAllPositions] withStrict:0.4] )
     {
         [self gameOver:YES];
     }

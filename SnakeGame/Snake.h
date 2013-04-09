@@ -35,6 +35,6 @@
 - (void) moveWithTouchPoint:(CGPoint)touchPoint;
 
 - (BOOL)eatFoodWithFoodPosition:(CCSprite *)food;
-- (BOOL)willDieWithAnotherSnake:(NSArray*)snake;
+- (BOOL)willDieWithAnotherSnake:(NSArray*)snake withStrict:(float)strict;
 
 @end
