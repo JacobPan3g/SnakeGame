@@ -49,8 +49,8 @@
         
 		_snake = [[Snake alloc] initWithTheGame:self withImageName:@"body.png" withHeadPosition:ccp(128,288)];
         _aiSnake = [[AiSanke alloc] initWithTheGame:self withImageName:@"ai_body.png" withHeadPosition:ccp(128,32)];
-        [self schedule:@selector(checkForCollision) interval:0.1];
-        [self schedule:@selector(update:) interval:0.8];
+        [self schedule:@selector(updateQuick) interval:0.2];
+        [self schedule:@selector(updateSlow) interval:1];
         
         _food = [CCSprite spriteWithFile:@"food.png"];
         [self addChild:_food];
@@ -74,45 +74,13 @@
 	[super dealloc];
 }
 
-- (void) update:(ccTime)dt
-{
-    [_snake move];
-    [_aiSnake moveNextWithAntherSnake:[_snake getAllPositions] withFood:_food.position];
-    //[_aiSnake moveWithTouchPoint:_food.position];
-    //[self eatFood];
-}
-
-- (void)ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    UITouch *touch = [touches anyObject];
-    CGPoint location = [self convertTouchToNodeSpace:touch];
-    /*
-    // judage the direction
-    CGPoint offset = ccpSub(location, [_snake getHeadPosition]);
-    if (offset.x == 0 && offset.y == 0) return;
-    CGPoint dir;
-    if ( fabs(offset.y) < fabs(offset.x) )
-    {
-        dir.y = 0;
-        dir.x = offset.x > 0 ? 1 : -1;
-    }
-    else
-    {
-        dir.x = 0;
-        dir.y = offset.y > 0 ? 1 : -1;
-    }
-    [_snake moveWithDir:dir];*/
-    
-    [_snake moveWithTouchPoint:location];
-}
-
 - (BOOL)isEmpty:(CGPoint)pos
 {
     CGPoint cur;
     for (NSValue *item in [_snake getAllPositions])
     {
         [item getValue:&cur];
-        if ( ccpDistance(cur, pos) == 0 )
+        if ( ccpDistance(cur, pos) < _food.contentSize.width/2 )
         {
             return NO;
         }
@@ -121,7 +89,7 @@
     for ( NSValue *item in [_aiSnake getAllPositions] )
     {
         [item getValue:&cur];
-        if ( ccpDistance(cur, pos) == 0 )
+        if ( ccpDistance(cur, pos) == _food.contentSize.width/2 )
         {
             return NO;
         }
@@ -135,52 +103,15 @@
     do {
         CGSize winSize = [CCDirector sharedDirector].winSize;
         int foodSize = _food.contentSize.width;
-        int x = arc4random() % (int)(winSize.width-foodSize);
-        int y = arc4random() % (int)(winSize.height-foodSize);
-        int foodX = x/foodSize*foodSize+foodSize/2;
-        int foodY = y/foodSize*foodSize+foodSize/2;
+        int x = arc4random() % (int)(winSize.width-foodSize*2);
+        int y = arc4random() % (int)(winSize.height-foodSize*2);
+        int foodX = x/foodSize*foodSize+foodSize*1.5;
+        int foodY = y/foodSize*foodSize+foodSize*1.5;
         newPos = ccp( foodX, foodY );
     } while ( ![self isEmpty:newPos] );
     
     _food.position = newPos;
-    
-    
-    //[_aiSnake getRoad:_food.position];
 }
-/*
-- (void)eatFood
-{
-    [_snake eatFoodWithFoodPosition:_food];
-    [self setFood];
-    
-}*/
-/*
-- (BOOL)outOfScreen
-{
-    CGPoint pos = [_snake getHeadPosition];
-    int minX = [_snake getHeadImageSize]/2;
-    int maxX = 480 - [_snake getHeadImageSize]/2;
-    int minY = minX;
-    int maxY = 320 - [_snake getHeadImageSize]/2;
-    
-    if ( (pos.x < minX || pos.x > maxX) || (pos.y < minY || pos.y > maxY) )
-    {
-        return YES;
-    }
-    return NO;
-}*/
-/*
-- (BOOL)suicide
-{
-    for (CCSprite *item in [_snake getBodyPosition])
-    {
-        if ( ccpDistance([_snake getHeadPosition], item.position) < [_snake getHeadImageSize]*0.5f )
-        {
-            return YES;
-        }
-    }
-    return NO;
-}*/
 
 - (void)checkForCollision
 {
@@ -222,8 +153,46 @@
     if ( _snake != nil )
     {
         [_snake removeFromParentAndCleanup:YES];
-        //_snake = [[Snake alloc] initWithTheGame:self withImageName:@"body.png"];
     }
+}
+
+# pragma mark - update methods
+
+- (void) updateQuick
+{
+    [_snake move];
+    [_aiSnake move];
+    
+    [self checkForCollision];
+}
+
+- (void) updateSlow
+{
+    [_aiSnake moveNextWithAntherSnake:[_snake getAllPositions] withFood:_food.position];
+}
+
+- (void)ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    UITouch *touch = [touches anyObject];
+    CGPoint location = [self convertTouchToNodeSpace:touch];
+    /*
+     // judage the direction
+     CGPoint offset = ccpSub(location, [_snake getHeadPosition]);
+     if (offset.x == 0 && offset.y == 0) return;
+     CGPoint dir;
+     if ( fabs(offset.y) < fabs(offset.x) )
+     {
+     dir.y = 0;
+     dir.x = offset.x > 0 ? 1 : -1;
+     }
+     else
+     {
+     dir.x = 0;
+     dir.y = offset.y > 0 ? 1 : -1;
+     }
+     [_snake moveWithDir:dir];*/
+    
+    [_snake moveWithTouchPoint:location];
 }
 
 

@@ -18,6 +18,7 @@
     CGPoint _dir;
     NSString *_bodyImageName;
     CGPoint _initHeadPos;
+    int _speed;
 }
 
 @property (nonatomic) int sorce;

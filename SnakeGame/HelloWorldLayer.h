@@ -22,8 +22,6 @@
     AiSanke *_aiSnake;
     CCSprite *_food;
     
-    int _snakeSorce;
-    int _aiSnakeSorce;
     CCLabelTTF *_snakeSorceLabel;
     CCLabelTTF *_aiSnakeSorceLabel;
 }

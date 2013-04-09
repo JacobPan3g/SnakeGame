@@ -18,6 +18,7 @@
     if ( self = [super init] )
     {
         self.sorce = 0;
+        _speed = 1;
         
         _game = game;
         _bodyImageName = filename;
@@ -144,7 +145,7 @@
 -(void)move
 {
     int range = _head.contentSize.width;
-    int duration = 1;
+    float duration = 1.0/_speed;
     CGPoint fontPos = _head.position;
     
     // move the hand
@@ -185,6 +186,11 @@
 - (void)eatedFood
 {
     self.sorce++;
+    if ( self.sorce % 3 == 0 )
+    {
+        _speed += 0.2;
+    }
+    
     
     CCSprite *tmpBody = [CCSprite spriteWithFile:_bodyImageName];
     [self addChild:tmpBody];
@@ -213,7 +219,7 @@
     for ( int i = 0; i < [_body count]; i++ )
     {
         CCSprite *item = [_body objectAtIndex:i];
-        if ( ccpDistance(_head.position, item.position) < _head.contentSize.width * 0.5 )
+        if ( ccpDistance(_head.position, item.position) < _head.contentSize.width * 0.4 )
         {
             return YES;
         }

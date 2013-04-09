@@ -10,7 +10,7 @@
 
 
 @implementation AiSanke
-
+/*
 - (NSArray *)getRoad:(CGPoint)fondPosition
 {
     if ( _road != nil )
@@ -58,18 +58,8 @@
     idxForRoad = 0;
     
     return _road;
-}
-/*
-- (void)move
-{
-    if ( idxForRoad < [_road count] )
-    {
-        CGPoint firstDir;
-        [[_road objectAtIndex:idxForRoad] getValue:&firstDir];
-        idxForRoad++;
-        [super moveWithDir:firstDir];
-    }
 }*/
+
 
 - (void)moveNextWithAntherSnake:(NSArray*)snake withFood:(CGPoint)food
 {
@@ -92,9 +82,9 @@
     {
         [[dirs objectAtIndex:i] getValue:&realDir];
         
-        [self logPoint:_head.position];
+        //[self logPoint:_head.position];
         _head.position = ccp(_head.position.x+realDir.x*imageWidth, _head.position.y+realDir.y*imageWidth);
-        [self logPoint:_head.position];
+        //[self logPoint:_head.position];
         
         // if not dead, compute the shortest
         if ( ![self willDieWithAnotherSnake:snake] )
@@ -122,7 +112,6 @@
     //[self moveWithDir:realDir];
     
     _dir = realDir;
-    [self move];
 }
 
 - (void)logPoint:(CGPoint)p
